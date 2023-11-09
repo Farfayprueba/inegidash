@@ -9,8 +9,7 @@ import numpy as np
 import pathlib
 import dash_auth
 from flask import request
-PATH = pathlib.Path(__file__).parent
-DATA_PATH = PATH.joinpath("./data").resolve()
+
 users = [
     ['edodemexico', 'J$@9m#Px&Zq2s5L'],
     ['veracruz', '8#vY@p4KwU!tN7D'],
@@ -44,15 +43,17 @@ external_stylesheets = [meta_tags, font_awesome]
 inegi = pd.read_csv('inegi.csv')
 inegi.replace("*", 0, inplace=True)
 inegi = inegi.apply(pd.to_numeric, errors='ignore')
-app = dash.Dash(__name__, external_stylesheets = external_stylesheets)
+dash_app = dash.Dash(__name__, external_stylesheets = external_stylesheets)
+
 
 auth = dash_auth.BasicAuth(
-    app,
+    dash_app,
     users)
+
 def get_username():
     return request.authorization['username'] if request.authorization else None
 
-@app.callback(
+@dash_app.callback(
     [Output('select_est', 'options'),
      Output('select_est', 'value')],
     Input('select_est', 'value')
@@ -167,10 +168,10 @@ def update_dropdown_options(selected_value):
         return [], None
 
 
-app.layout = html.Div([
+dash_app.layout = html.Div([
     html.Div([
         html.Div([
-            html.Img(src = app.get_asset_url('statistics.png'),
+            html.Img(src = dash_app.get_asset_url('statistics.png'),
                      style = {'height': '30px'},
                      className = 'title_image'
                      ),
@@ -463,7 +464,7 @@ app.layout = html.Div([
 
 
 #############################
-@app.callback(
+@dash_app.callback(
     Output('select_mun', 'disabled'),
      [Output('select_mun', 'options'),
      Output('select_mun', 'value')],
@@ -484,7 +485,7 @@ def update_municipios(selected_estado):
 #############################
 
 
-@app.callback(Output('poblacion_total', 'children'),
+@dash_app.callback(Output('poblacion_total', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -504,14 +505,14 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pobtot[0]),
                            ),
-                    html.Img(src = app.get_asset_url('organizacion.png'),
+                    html.Img(src = dash_app.get_asset_url('organizacion.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
                 ], className = 'indicator_column'),
             ]
 
-@app.callback(Output('discapacitada', 'children'),
+@dash_app.callback(Output('discapacitada', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -533,14 +534,14 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pcon_disc[0]),
                            ),
-                    html.Img(src = app.get_asset_url('discapacidad.png'),
+                    html.Img(src = dash_app.get_asset_url('discapacidad.png'),
                      style = {'height': '45px'},
                      className = 'title_image'
                      ),
                 ], className = 'indicator_column'),
             ]
 
-@app.callback(Output('mentalillness', 'children'),
+@dash_app.callback(Output('mentalillness', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -562,14 +563,14 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pcon_disc[0]),
                            ),
-                    html.Img(src = app.get_asset_url('frasco-de-pastillas.png'),
+                    html.Img(src = dash_app.get_asset_url('frasco-de-pastillas.png'),
                      style = {'height': '45px'},
                      className = 'title_image'
                      ),
                 ], className = 'indicator_column'),
             ]
 
-@app.callback(Output('discapacidad_motora', 'children'),
+@dash_app.callback(Output('discapacidad_motora', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -590,14 +591,14 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pcon_disc[0]),
                            ),
-                    html.Img(src = app.get_asset_url('discapacidad_motora.png'),
+                    html.Img(src = dash_app.get_asset_url('discapacidad_motora.png'),
                      style = {'height': '45px'},
                      className = 'title_image'
                      ),
                 ], className = 'indicator_column'),
             ]
             
-@app.callback(Output('discapacidad_visual', 'children'),
+@dash_app.callback(Output('discapacidad_visual', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -615,7 +616,7 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pcon_disc[0]),
                            ),
-                    html.Img(src = app.get_asset_url('discapacidad-visual.png'),
+                    html.Img(src = dash_app.get_asset_url('discapacidad-visual.png'),
                      style = {'height': '45px'},
                      className = 'title_image'
                      ),
@@ -625,7 +626,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         
             
-@app.callback(Output('discapacidad_auditiva', 'children'),
+@dash_app.callback(Output('discapacidad_auditiva', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -643,7 +644,7 @@ def update_text(select_mun,select_est):
                 html.Div([
                     html.P('{0:,.0f}'.format(pcon_disc[0]),
                            ),
-                    html.Img(src = app.get_asset_url('la-discapacidad-auditiva.png'),
+                    html.Img(src = dash_app.get_asset_url('la-discapacidad-auditiva.png'),
                      style = {'height': '45px'},
                      className = 'title_image'
                      ),
@@ -655,7 +656,7 @@ def update_text(select_mun,select_est):
 ############################
 
 
-@app.callback(Output('accounts_receivable_value', 'children'),
+@dash_app.callback(Output('accounts_receivable_value', 'children'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -674,7 +675,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if float(pob_fem[0]/pob_tot[0]) > 0.5:
             return [
-                html.Img(src = app.get_asset_url('mujeres.png'),
+                html.Img(src = dash_app.get_asset_url('mujeres.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
@@ -696,7 +697,7 @@ def update_text(select_mun,select_est):
             ]
         elif float(pob_fem[0]/pob_tot[0]) < 0.5:
             return [
-                html.Img(src = app.get_asset_url('mujeres.png'),
+                html.Img(src = dash_app.get_asset_url('mujeres.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
@@ -730,7 +731,7 @@ def update_text(select_mun,select_est):
                 ], className = 'indicator_column'),
             ]
 
-@app.callback(Output('accounts_payable_value', 'children'),
+@dash_app.callback(Output('accounts_payable_value', 'children'),
             [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -748,7 +749,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if pob65mas > 0:
             return [
-                 html.Img(src = app.get_asset_url('adultos_mayores.png'),
+                 html.Img(src = dash_app.get_asset_url('adultos_mayores.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
@@ -763,7 +764,7 @@ def update_text(select_mun,select_est):
                 ], className = 'indicator_column'),
             ]
         
-@app.callback(Output('income_value', 'children'),
+@dash_app.callback(Output('income_value', 'children'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -782,7 +783,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if float(pob_mas[0]/pob_tot[0]) > 0.5:
             return [
-                html.Img(src = app.get_asset_url('hombre.png'),
+                html.Img(src = dash_app.get_asset_url('hombre.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
@@ -805,7 +806,7 @@ def update_text(select_mun,select_est):
             ]
         elif float(pob_mas[0]/pob_tot[0]) < 0.5:
             return [
-                html.Img(src = app.get_asset_url('hombre.png'),
+                html.Img(src = dash_app.get_asset_url('hombre.png'),
                      style = {'height': '40px'},
                      className = 'title_image'
                      ),
@@ -840,7 +841,7 @@ def update_text(select_mun,select_est):
             ]
 
 
-@app.callback(Output('primercirculo', 'children'),
+@dash_app.callback(Output('primercirculo', 'children'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -887,7 +888,7 @@ def update_text(select_mun,select_est):
        
            
 
-@app.callback(Output('chart1', 'figure'),
+@dash_app.callback(Output('chart1', 'figure'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')],
               )
@@ -936,7 +937,7 @@ def update_graph(select_mun,select_est):
     }
 
 
-@app.callback(Output('segundocirculo', 'children'),
+@dash_app.callback(Output('segundocirculo', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')],
               )
@@ -978,7 +979,7 @@ def update_text(select_mun,select_est):
             ]
         else:
             raise PreventUpdate
-@app.callback(Output('chart2', 'figure'),
+@dash_app.callback(Output('chart2', 'figure'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')],
               )
@@ -1022,7 +1023,7 @@ def update_graph(select_mun,select_est):
     }
 
 
-@app.callback(Output('instituciones', 'figure'),
+@dash_app.callback(Output('instituciones', 'figure'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')])
 def update_text(select_mun, select_est):
@@ -1092,7 +1093,7 @@ def update_text(select_mun, select_est):
             ),
         }
 
-@app.callback(Output('sinelectricidad', 'children'),
+@dash_app.callback(Output('sinelectricidad', 'children'),
               [Input('select_mun', 'value')],
               [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1109,7 +1110,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if sin_elec:
             return [
-                 html.Img(src = app.get_asset_url('sin-enchufe.png'),
+                 html.Img(src = dash_app.get_asset_url('sin-enchufe.png'),
                      style = {'height': '60px'},
                      className = 'title_image'
                      ),
@@ -1128,7 +1129,7 @@ def update_text(select_mun,select_est):
             ]
 
 
-@app.callback(Output('current_ratio_value', 'children'),
+@dash_app.callback(Output('current_ratio_value', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1145,7 +1146,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if sin_agua:
             return [
-                 html.Img(src = app.get_asset_url('no-hay-agua.png'),
+                 html.Img(src = dash_app.get_asset_url('no-hay-agua.png'),
                      style = {'height': '60px'},
                      className = 'title_image'
                      ),
@@ -1165,7 +1166,7 @@ def update_text(select_mun,select_est):
 
 
 
-@app.callback(Output('net_profit_value', 'children'),
+@dash_app.callback(Output('net_profit_value', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1182,7 +1183,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if sin_dren:
             return [
-                 html.Img(src = app.get_asset_url('sin-contaminacion.png'),
+                 html.Img(src = dash_app.get_asset_url('sin-contaminacion.png'),
                      style = {'height': '60px'},
                      className = 'title_image'
                      ),
@@ -1201,7 +1202,7 @@ def update_text(select_mun,select_est):
             ]
 
 
-@app.callback(Output('cash_at_eom_value', 'children'),
+@dash_app.callback(Output('cash_at_eom_value', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1218,7 +1219,7 @@ def update_text(select_mun,select_est):
             raise PreventUpdate
         if sin_tic:
             return [
-                 html.Img(src = app.get_asset_url('sin-telefono.png'),
+                 html.Img(src = dash_app.get_asset_url('sin-telefono.png'),
                      style = {'margin-left':'10px','height': '60px'},
                      className = 'title_image'
                      ),
@@ -1238,7 +1239,7 @@ def update_text(select_mun,select_est):
 
 
 
-@app.callback(Output('third_left_circle', 'children'),
+@dash_app.callback(Output('third_left_circle', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1249,15 +1250,6 @@ def update_text(select_mun,select_est):
     else:
         filter_mun = inegi[(inegi['NOM_MUN'] == select_mun) & (inegi['NOM_ENT'] == select_est)]
         if not filter_mun.empty:  # Verifica que el DataFrame no esté vacío
-            tvivpar = int(filter_mun['TVIVPAR'].values[0])
-            sin_tic = int(filter_mun['VPH_SINTIC'].values[0]) #sin tics
-            sin_comp = int(filter_mun['VPH_SINCINT'].values[0]) #sin computadora
-            sin_tel = int(filter_mun['VPH_SINLTC'].values[0]) #sin telefonia
-            sin_rtv = int(filter_mun['VPH_SINRTV'].values[0]) #sin radio ni television
-            sin_agua = int(filter_mun['VPH_AGUAFV'].values[0]) #sin agua entubada
-            sin_dren = int(filter_mun['VPH_NODREN'].values[0]) #sin drenaje
-            sin_tras_priv = int(filter_mun['VPH_NDACMM'].values[0]) #sin drenaje
-          
             return [
                 html.Div([
                     html.Div([
@@ -1287,7 +1279,7 @@ def update_text(select_mun,select_est):
 
 
 
-@app.callback(Output('chart3', 'figure'),
+@dash_app.callback(Output('chart3', 'figure'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_graph(select_mun,select_est):
@@ -1347,7 +1339,7 @@ def update_graph(select_mun,select_est):
             }
 
 
-@app.callback(Output('fourth_right_circle', 'children'),
+@dash_app.callback(Output('fourth_right_circle', 'children'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_text(select_mun,select_est):
@@ -1388,7 +1380,7 @@ def update_text(select_mun,select_est):
             ]
 
 
-@app.callback(Output('chart4', 'figure'),
+@dash_app.callback(Output('chart4', 'figure'),
             [Input('select_mun', 'value')],
             [Input('select_est', 'value')])
 def update_graph(select_mun,select_est):
@@ -1437,5 +1429,5 @@ def update_graph(select_mun,select_est):
 
 
 
-if __name__ == "__main__":
-    app.run_server(debug = True)
+# if __name__ == "__main__":
+#     dash_app.run_server(debug = True)
