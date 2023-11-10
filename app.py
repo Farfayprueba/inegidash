@@ -8,7 +8,6 @@ import numpy as np
 import pathlib
 import dash_auth
 from flask import Flask, request, Response
-from auth import create_auth_instance
 
 users = [
     ['a', 'a'],
